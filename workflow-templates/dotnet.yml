@@ -1,0 +1,45 @@
+name: .NET Core
+
+on: # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#on
+  push:
+    branches: # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
+      - master # we must build when there is a push to master
+      - main # we must build when there is a push to main (new default branch)
+        #    tags: # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
+        #      - v1 # Push events to v1 tag
+        #      - v1.* # Push events to v1.0, v1.1, and v1.9 tags
+  pull_request:
+    branches:
+      - master # good practice to only run these when there is a pull request opened targeting master
+      - main # good practice to only run these when there is a pull request opened targeting main (new default branch)
+
+# defaults: # global defaults for all jobs can be set here - https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#defaults
+#   run:
+#     working-directory: aws-sam-hello-world # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#defaultsrun
+
+jobs:
+  build-hello-world:
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_NOLOGO: true # DOTNET_NOLOGO default is false
+      DOTNET_CLI_TELEMETRY_OPTOUT: true # DOTNET_CLI_TELEMETRY_OPTOUT default is false
+      DOTNET_MULTILEVEL_LOOKUP: true # DOTNET_MULTILEVEL_LOOKUP is true
+
+      #    defaults: # defaults for specific job can be set here - https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_iddefaults
+      #      run:
+      #        working-directory: src # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#defaultsrun
+
+    steps:
+    - name: checkout source # consistent naming of job steps - just use all lowercase
+      uses: actions/checkout@v2 # https://github.com/actions/checkout
+    - name: setup sdk
+      uses: actions/setup-dotnet@v1 # https://github.com/actions/setup-dotnet
+      with:
+        dotnet-version: 5.0.x # SDK Version to use.  x is a wildcard that uses the most current patch version in this case.
+    - name: install dependencies
+      run: dotnet restore Project.sln
+    - name: build
+      run: dotnet build Project.sln --configuration Release --no-restore
+    - name: test
+      run: dotnet test Project.sln --no-restore --verbosity normal
