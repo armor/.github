@@ -3,15 +3,13 @@ name: .NET Core
 on: # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#on
   push:
     branches: # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
-      - master # we must build when there is a push to master
-      - main # we must build when there is a push to main (new default branch)
+      - $default-branch # we must build when there is a push to the default branch
         #    tags: # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
         #      - v1 # Push events to v1 tag
         #      - v1.* # Push events to v1.0, v1.1, and v1.9 tags
   pull_request:
     branches:
-      - master # good practice to only run these when there is a pull request opened targeting master
-      - main # good practice to only run these when there is a pull request opened targeting main (new default branch)
+      - $default-branch # good practice to only run these when there is a pull request opened targeting the default branch
 
 # defaults: # global defaults for all jobs can be set here - https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#defaults
 #   run:
